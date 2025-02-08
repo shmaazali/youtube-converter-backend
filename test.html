@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test YouTube Converter</title></head>
+<body>
+    <h2>YouTube Converter</h2>
+    <input type="text" id="videoUrl" placeholder="Enter YouTube URL">
+    <select id="format">
+        <option value="mp4">MP4</option>
+        <option value="mp3">MP3</option>
+    </select>
+    <button onclick="convertVideo()">Convert</button>
+    <div id="response"></div>
+
+    <script>
+        async function convertVideo() {
+            const url = document.getElementById("videoUrl").value;
+            const format = document.getElementById("format").value;
+
+            const response = await fetch("http://127.0.0.1:5000/convert", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url, format })
+            });
+
+            const data = await response.json();
+            document.getElementById("response").innerHTML = JSON.stringify(data);
+        }
+    </script>
+</body>
+</html>
