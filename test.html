@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
-<head><title>Test YouTube Converter</title></head>
+<head>
+    <title>YouTube Converter</title>
+</head>
 <body>
     <h2>YouTube Converter</h2>
     <input type="text" id="videoUrl" placeholder="Enter YouTube URL">
@@ -8,22 +10,52 @@
         <option value="mp4">MP4</option>
         <option value="mp3">MP3</option>
     </select>
-    <button onclick="convertVideo()">Convert</button>
-    <div id="response"></div>
+    <button id="convertBtn" onclick="convertVideo()">Convert</button>
+    <a id="downloadLink" style="display: none;" download>Download</a>
+    <p id="status"></p>
 
     <script>
         async function convertVideo() {
             const url = document.getElementById("videoUrl").value;
             const format = document.getElementById("format").value;
+            const convertBtn = document.getElementById("convertBtn");
+            const downloadLink = document.getElementById("downloadLink");
+            const statusText = document.getElementById("status");
 
-            const response = await fetch("http://127.0.0.1:5000/convert", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ url, format })
-            });
+            if (!url) {
+                alert("Please enter a YouTube URL.");
+                return;
+            }
 
-            const data = await response.json();
-            document.getElementById("response").innerHTML = JSON.stringify(data);
+            // Update button status
+            convertBtn.innerText = "Processing...";
+            convertBtn.disabled = true;
+            statusText.innerText = "Conversion in progress...";
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/convert", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ url, format })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // Update button status and show download link
+                convertBtn.innerText = "Download";
+                convertBtn.onclick = () => window.location.href = data.downloadUrl;
+                convertBtn.disabled = false;
+                statusText.innerText = "Conversion complete! Click download.";
+            } catch (error) {
+                console.error("Error:", error);
+                statusText.innerText = "Error: " + error.message;
+                convertBtn.innerText = "Convert";
+                convertBtn.disabled = false;
+            }
         }
     </script>
 </body>
