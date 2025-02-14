@@ -3,6 +3,11 @@ from flask_cors import CORS
 import yt_dlp
 import os
 
+cookies_content = os.getenv("YOUTUBE_COOKIES")
+with open("youtube_cookies.txt", "w") as f:
+    f.write(cookies_content)
+    
+    
 app = Flask(__name__)
 CORS(app, origins=["https://trustwavetrade.com"])
 
@@ -67,7 +72,7 @@ def convert():
     "quiet": True,
     "noplaylist": True,
     "geo_bypass": True,
-    "cookies": "/etc/secrets/cookies.txt",
+    "cookies": "youtube_cookies.txt",
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
