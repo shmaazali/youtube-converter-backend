@@ -38,7 +38,7 @@ def convert():
     output_file = f"{DOWNLOAD_FOLDER}/%(title)s.%(ext)s"
 
     # yt-dlp options
-    ydl_opts = {
+"""    ydl_opts = {
         "format": "bestaudio/best" if format == "mp3" else "bestvideo+bestaudio/best",
         "outtmpl": output_file,
         "postprocessors": [
@@ -53,7 +53,21 @@ def convert():
         "noplaylist": True,
         "geo_bypass": True,
         "progress_hooks": [progress_hook],
-    }
+    }"""
+    ydl_opts = {
+    "format": "bestaudio/best" if format == "mp3" else "bestvideo+bestaudio/best",
+    "outtmpl": output_file,
+    "postprocessors": [
+        {
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",
+        }
+    ] if format == "mp3" else [],
+    "quiet": True,
+    "noplaylist": True,
+    "geo_bypass": True,
+    "cookies": "/etc/secrets/cookies.txt",
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
