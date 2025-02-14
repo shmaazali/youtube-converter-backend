@@ -4,7 +4,7 @@ import yt_dlp
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://trustwavetrade.com"])
 
 # Directory to save downloaded files
 DOWNLOAD_FOLDER = "downloads"
